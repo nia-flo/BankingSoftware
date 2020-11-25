@@ -44,6 +44,36 @@ void readFile (std::fstream& file, std::vector<std::string> &usernames, std::vec
     }
 }
 
+
+void mainMenu (std::fstream& file, std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
+    while (true)
+    {
+        std::cout << "Choose one of the options (L, R or Q):\n";
+        std::cout << "L - login\n";
+        std::cout << "R - register\n";
+        std::cout << "Q - quit\n";
+
+        //choice is string although it must be only one letter, because the user could enter the whole word instead of the wanted letter
+        std::string choice;
+        
+        std::cin >> choice;
+
+        if (choice == "L") {
+            //TODO: login
+            return;
+        } else if (choice == "R") {
+            //TODO: register
+            return;
+        } else if (choice == "Q") {
+            //TODO: quit
+            return;
+        } else {
+            std::cout << "Incorrect input. Please try again.\n";
+        }
+    }
+    
+}
+
 int main () {
     std::fstream usersFile;
 
@@ -57,6 +87,8 @@ int main () {
     std::vector<double> balances;
 
     readFile (usersFile, usernames, passwords, balances);
+
+    mainMenu (usersFile, usernames, passwords, balances);
 
     usersFile.close();
 
