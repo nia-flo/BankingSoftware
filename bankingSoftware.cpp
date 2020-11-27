@@ -30,7 +30,7 @@ bool isFileEmpty (std::fstream& file) {
     return file.peek() == std::ifstream::traits_type::eof();
 }
 
-bool readFile (std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
+bool readFile (std::vector<user> &users) {
     std::fstream file;
 
     file.open (FILE_NAME, std::ios::in | std::ios::out | std::ios::app);
@@ -44,9 +44,9 @@ bool readFile (std::vector<std::string> &usernames, std::vector<std::string> &pa
     while (!isFileEmpty(file) && std::getline(file, line)) {
         std::vector<std::string> parameters = splitLine(line, LINE_DELIMITER);
 
-        usernames.push_back(parameters[0]);
-        passwords.push_back(parameters[1]);
-        balances.push_back(std::stod(parameters[2]));
+        user current(parameters[0], parameters[1], std::stod(parameters[2]));
+
+        users.push_back(current);
     }
 
     file.close();
@@ -64,9 +64,9 @@ bool isUsernameValid(std::string username) {
     return true;
 }
 
-bool isUsernameTaken (std::string username, std::vector<std::string> &usernames) {
-    for (int i = 0; i < usernames.size(); ++i) {
-        if (username == usernames[i]) {
+bool isUsernameTaken (std::string username, std::vector<user> &users) {
+    for (int i = 0; i < users.size(); ++i) {
+        if (username == users[i].username) {
             return true;
         }
     }
@@ -74,7 +74,7 @@ bool isUsernameTaken (std::string username, std::vector<std::string> &usernames)
     return false;
 }
 
-std::string askForUsername (std::vector<std::string> &usernames) {
+std::string askForUsername (std::vector<user> &users) {
     std::string username;
 
     std::cout << "Please enter your username: ";
@@ -85,13 +85,13 @@ std::string askForUsername (std::vector<std::string> &usernames) {
     if (!isUsernameValid(username)) {
         std::cout << "Username is not valid - it must contain only latin letters and/or the symbols _-.\n\n";
         
-        return askForUsername(usernames);
+        return askForUsername(users);
     }
 
-    if (isUsernameTaken(username, usernames)) {
+    if (isUsernameTaken(username, users)) {
         std::cout << "This username is already taken!\n\n";
             
-        return askForUsername(usernames);
+        return askForUsername(users);
     }
 
     return username;
@@ -183,17 +183,17 @@ std::string askForPassword () {
     return askForPassword();
 }
 
-void addUserToDB (std::string username, std::string password, std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
-    usernames.push_back(username);
-    passwords.push_back(password);
-    balances.push_back(INITIAL_BALANCE);
+void addUser (std::string username, std::string password, std::vector<user> &users) {
+    user newUser(username, password, INITIAL_BALANCE);
+
+    users.push_back(newUser);
 }
 
 
-void registerUser (std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
+void registerUser (std::vector<user> &users) {
     std::string username, password;
 
-    username = askForUsername(usernames);
+    username = askForUsername(users);
 
     std::cout << '\n';
 
@@ -203,12 +203,12 @@ void registerUser (std::vector<std::string> &usernames, std::vector<std::string>
 
     std::string passwordHash = std::to_string(generatedHash);
 
-    addUserToDB (username, passwordHash, usernames, passwords, balances);
+    addUser (username, passwordHash, users);
 
     //TODO: redirect to main menu
 }
 
-void startMenu (std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
+void startMenu (std::vector<user> &users) {
     while (true)
     {
         std::cout << "Choose one of the options (L, R or Q):\n";
@@ -227,7 +227,7 @@ void startMenu (std::vector<std::string> &usernames, std::vector<std::string> &p
             //TODO: login
             return;
         } else if (choice == "R") {
-            registerUser(usernames, passwords, balances);
+            registerUser(users);
 
             return;
         } else if (choice == "Q") {
@@ -241,16 +241,15 @@ void startMenu (std::vector<std::string> &usernames, std::vector<std::string> &p
 }
 
 int main () {
-    std::vector<std::string> usernames, passwords;
-    std::vector<double> balances;
+    std::vector<user> users;
 
-    if (!readFile (usernames, passwords, balances)) {
+    if (!readFile (users)) {
         std::cout << "Error - database file could not be loaded.";
 
         return 0;
     }
 
-    startMenu (usernames, passwords, balances);
+    startMenu (users);
 
     return 0;
 }
