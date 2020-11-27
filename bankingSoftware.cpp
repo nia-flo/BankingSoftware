@@ -241,8 +241,6 @@ void startMenu (std::vector<std::string> &usernames, std::vector<std::string> &p
 }
 
 int main () {
-    std::cout << curr.username << ' ' << curr.password << ' ' << curr.balance << '\n';
-
     std::vector<std::string> usernames, passwords;
     std::vector<double> balances;
 
