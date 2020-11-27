@@ -8,16 +8,6 @@
 #define LINE_DELIMITER ':'
 #define INITIAL_BALANCE 0
 
-bool openFile (std::fstream& file) {
-    file.open (FILE_NAME, std::ios::in | std::ios::out | std::ios::app);
-
-    if (!file.is_open()) {
-        return false;
-    }
-
-    return true;
-}
-
 std::vector<std::string> splitLine(std::string line, char delimiter) {
     std::vector<std::string> result;
 
@@ -38,7 +28,15 @@ bool isFileEmpty (std::fstream& file) {
     return file.peek() == std::ifstream::traits_type::eof();
 }
 
-void readFile (std::fstream& file, std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
+bool readFile (std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
+    std::fstream file;
+
+    file.open (FILE_NAME, std::ios::in | std::ios::out | std::ios::app);
+
+    if (!file.is_open()) {
+        return false;
+    }
+    
     std::string line;
 
     while (!isFileEmpty(file) && std::getline(file, line)) {
@@ -48,6 +46,10 @@ void readFile (std::fstream& file, std::vector<std::string> &usernames, std::vec
         passwords.push_back(parameters[1]);
         balances.push_back(std::stod(parameters[2]));
     }
+
+    file.close();
+
+    return true;
 }
 
 bool isUsernameValid(std::string username) {
@@ -179,14 +181,14 @@ std::string askForPassword () {
     return askForPassword();
 }
 
-void addUserToDB (std::string username, std::string password, std::fstream& file, std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
+void addUserToDB (std::string username, std::string password, std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
     usernames.push_back(username);
     passwords.push_back(password);
     balances.push_back(INITIAL_BALANCE);
 }
 
 
-void registerUser (std::fstream& file, std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
+void registerUser (std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
     std::string username, password;
 
     username = askForUsername(usernames);
@@ -199,12 +201,12 @@ void registerUser (std::fstream& file, std::vector<std::string> &usernames, std:
 
     std::string passwordHash = std::to_string(generatedHash);
 
-    addUserToDB (username, passwordHash, file, usernames, passwords, balances);
+    addUserToDB (username, passwordHash, usernames, passwords, balances);
 
     //TODO: redirect to main menu
 }
 
-void startMenu (std::fstream& file, std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
+void startMenu (std::vector<std::string> &usernames, std::vector<std::string> &passwords, std::vector<double> &balances) {
     while (true)
     {
         std::cout << "Choose one of the options (L, R or Q):\n";
@@ -223,7 +225,7 @@ void startMenu (std::fstream& file, std::vector<std::string> &usernames, std::ve
             //TODO: login
             return;
         } else if (choice == "R") {
-            registerUser(file, usernames, passwords, balances);
+            registerUser(usernames, passwords, balances);
 
             return;
         } else if (choice == "Q") {
@@ -237,22 +239,16 @@ void startMenu (std::fstream& file, std::vector<std::string> &usernames, std::ve
 }
 
 int main () {
-    std::fstream usersFile;
+    std::vector<std::string> usernames, passwords;
+    std::vector<double> balances;
 
-    if (!openFile (usersFile)) {
+    if (!readFile (usernames, passwords, balances)) {
         std::cout << "Error - database file could not be loaded.";
 
         return 0;
     }
 
-    std::vector<std::string> usernames, passwords;
-    std::vector<double> balances;
-    
-    readFile (usersFile, usernames, passwords, balances);
-
-    startMenu (usersFile, usernames, passwords, balances);
-
-    usersFile.close();
+    startMenu (usernames, passwords, balances);
 
     return 0;
 }
