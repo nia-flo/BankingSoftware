@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <iomanip>
 
 #define FILE_NAME "users.txt"
 #define LINE_DELIMITER ':'
@@ -189,6 +190,45 @@ void addUser (std::string username, std::string password, std::vector<user> &use
     users.push_back(newUser);
 }
 
+void mainMenu (std::vector<user> users, int currentUserIdx) {
+    std::cout << "You have " << users[currentUserIdx].balance << " BGN. Choose one of the following options:\n";
+
+    while (true)
+    {
+        std::cout << "Choose one of the options (C, D, L, T, W):\n";
+        std::cout << "C - cancel account\n";
+        std::cout << "D - deposit\n";
+        std::cout << "L - logout\n";
+        std::cout << "T - transfer\n";
+        std::cout << "W - withdraw\n";
+
+        //choice is string although it must be only one letter, because the user could enter the whole word instead of the wanted letter
+        std::string choice;
+
+        std::cin >> choice;
+
+        std::cout << '\n';
+
+        if (choice == "C") {
+            //TODO: cancel account
+            return;
+        } else if (choice == "D") {
+            //TODO: deposit
+            return;
+        } else if (choice == "L") {
+            //TODO: logout
+            return;
+        } else if (choice == "T") {
+            //TODO: transfer
+            return;
+        } else if (choice == "W") {
+            //TODO: withdraw
+            return;
+        } else {
+            std::cout << "Incorrect input. Please try again.\n";
+        }
+    }
+}
 
 void registerUser (std::vector<user> &users) {
     std::string username, password;
@@ -205,7 +245,7 @@ void registerUser (std::vector<user> &users) {
 
     addUser (username, passwordHash, users);
 
-    //TODO: redirect to main menu
+    mainMenu(users, users.size() - 1);
 }
 
 bool saveChangesToFile (std::vector<user> &users) {
