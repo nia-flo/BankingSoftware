@@ -379,17 +379,17 @@ void cancelAccount (std::vector<user> users, int currentUserIdx) {
     startMenu(users);
 }
 
-void deposit (std::vector<user> users, int currentUserIdx) {
+double askForAmount () {
     double amount; 
 
-    std::cout << "Please enter the amount BGN that you want to deposit: ";
+    std::cout << "Please enter the amount BGN: ";
 
     std::cin >> amount;
 
     std::cout << "\n";
 
     while (amount <= 0) {
-        std::cout << "It is not possible to deposit 0 or less BGN, please enter a positive amount BGN: ";
+        std::cout << "The amount is not possible to be 0 or less BGN, please enter a positive amount BGN: ";
 
         std::cin >> amount;
 
@@ -398,6 +398,12 @@ void deposit (std::vector<user> users, int currentUserIdx) {
 
     amount = trunc (amount * 100) / 100;
 
+    return amount;
+}
+
+void deposit (std::vector<user> users, int currentUserIdx) {
+    double amount = askForAmount();
+    
     users[currentUserIdx].balance += amount;
 
     std::cout << "Successfully added " << amount << " BGN to to your accont.\n\n";
