@@ -6,6 +6,7 @@
 #include <vector>
 #include <functional>
 #include <iomanip>
+#include <math.h>
 
 #define FILE_NAME "users.txt"
 #define LINE_DELIMITER ':'
@@ -192,6 +193,8 @@ void addUser (std::string username, std::string password, std::vector<user> &use
 
 void cancelAccount (std::vector<user> users, int currentUserIdx);
 
+void deposit (std::vector<user> users, int currentUserIdx);
+
 void mainMenu (std::vector<user> users, int currentUserIdx) {
     std::cout << "You have " << users[currentUserIdx].balance << " BGN. Choose one of the following options:\n";
 
@@ -213,9 +216,11 @@ void mainMenu (std::vector<user> users, int currentUserIdx) {
 
         if (choice == "C") {
             cancelAccount(users, currentUserIdx);
+
             return;
         } else if (choice == "D") {
-            //TODO: deposit
+            deposit(users, currentUserIdx);
+
             return;
         } else if (choice == "L") {
             //TODO: logout
@@ -369,4 +374,30 @@ void cancelAccount (std::vector<user> users, int currentUserIdx) {
     std::cout << "Account cancelled successfully.\n\n";
 
     startMenu(users);
+}
+
+void deposit (std::vector<user> users, int currentUserIdx) {
+    double amount; 
+
+    std::cout << "Please enter the amount BGN that you want to deposit: ";
+
+    std::cin >> amount;
+
+    std::cout << "\n";
+
+    while (amount <= 0) {
+        std::cout << "It is not possible to deposit 0 or less BGN, please enter a positive amount BGN: ";
+
+        std::cin >> amount;
+
+        std::cout << "\n";
+    }
+
+    amount = trunc (amount * 100) / 100;
+
+    users[currentUserIdx].balance += amount;
+
+    std::cout << "Successfully added " << amount << " BGN to to your accont.\n\n";
+
+    mainMenu(users, currentUserIdx);
 }
