@@ -208,6 +208,28 @@ void registerUser (std::vector<user> &users) {
     //TODO: redirect to main menu
 }
 
+bool saveChangesToFile (std::vector<user> &users) {
+    std::fstream file;
+
+    file.open (FILE_NAME, std::ios::out | std::ios::trunc);
+
+    if (!file.is_open()) {
+        return false;
+    }
+    
+    for (int i = 0; i < users.size(); ++i) {
+        file << users[i].username << ':' << users[i].password << ':' << users[i].balance << '\n';
+    }
+
+    file.close();
+
+    return true;
+}
+
+void quit (std::vector<user> &users) {
+    saveChangesToFile(users);
+}
+
 void startMenu (std::vector<user> &users) {
     while (true)
     {
@@ -231,7 +253,8 @@ void startMenu (std::vector<user> &users) {
 
             return;
         } else if (choice == "Q") {
-            //TODO: quit
+            quit(users);
+            
             return;
         } else {
             std::cout << "Incorrect input. Please try again.\n";
