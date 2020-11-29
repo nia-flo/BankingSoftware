@@ -195,6 +195,8 @@ void cancelAccount (std::vector<user> users, int currentUserIdx);
 
 void deposit (std::vector<user> users, int currentUserIdx);
 
+void logout (std::vector<user> users, int currentUserIdx);
+
 void mainMenu (std::vector<user> users, int currentUserIdx) {
     std::cout << "You have " << users[currentUserIdx].balance << " BGN. Choose one of the following options:\n";
 
@@ -223,7 +225,8 @@ void mainMenu (std::vector<user> users, int currentUserIdx) {
 
             return;
         } else if (choice == "L") {
-            //TODO: logout
+            logout(users, currentUserIdx);
+
             return;
         } else if (choice == "T") {
             //TODO: transfer
@@ -400,4 +403,10 @@ void deposit (std::vector<user> users, int currentUserIdx) {
     std::cout << "Successfully added " << amount << " BGN to to your accont.\n\n";
 
     mainMenu(users, currentUserIdx);
+}
+
+void logout (std::vector<user> users, int currentUserIdx) {
+    std::cout << "You logged out successfully.\n\n";
+
+    startMenu(users);
 }
