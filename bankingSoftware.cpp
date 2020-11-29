@@ -222,18 +222,14 @@ void mainMenu (std::vector<user> users, int currentUserIdx) {
             return;
         } else if (choice == "D") {
             deposit(users, currentUserIdx);
-
-            return;
         } else if (choice == "L") {
             logout(users, currentUserIdx);
 
             return;
         } else if (choice == "T") {
-            //TODO: transfer
-            return;
+            //ToDO: transfer
         } else if (choice == "W") {
             //TODO: withdraw
-            return;
         } else {
             std::cout << "Incorrect input. Please try again.\n";
         }
@@ -407,8 +403,6 @@ void deposit (std::vector<user> users, int currentUserIdx) {
     users[currentUserIdx].balance += amount;
 
     std::cout << "Successfully added " << amount << " BGN to to your accont.\n\n";
-
-    mainMenu(users, currentUserIdx);
 }
 
 void logout (std::vector<user> users, int currentUserIdx) {
