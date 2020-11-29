@@ -190,6 +190,8 @@ void addUser (std::string username, std::string password, std::vector<user> &use
     users.push_back(newUser);
 }
 
+void cancelAccount (std::vector<user> users, int currentUserIdx);
+
 void mainMenu (std::vector<user> users, int currentUserIdx) {
     std::cout << "You have " << users[currentUserIdx].balance << " BGN. Choose one of the following options:\n";
 
@@ -210,7 +212,7 @@ void mainMenu (std::vector<user> users, int currentUserIdx) {
         std::cout << '\n';
 
         if (choice == "C") {
-            //TODO: cancel account
+            cancelAccount(users, currentUserIdx);
             return;
         } else if (choice == "D") {
             //TODO: deposit
@@ -359,4 +361,12 @@ void login (std::vector<user> &users) {
     }
 
     mainMenu(users, userIdx);
+}
+
+void cancelAccount (std::vector<user> users, int currentUserIdx) {
+    users.erase(users.begin() + currentUserIdx);
+
+    std::cout << "Account cancelled successfully.\n\n";
+
+    startMenu(users);
 }
