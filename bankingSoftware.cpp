@@ -122,7 +122,7 @@ int isPasswordValid (std::string password) {
         else if (password[i] == '!' || password[i] == '@' || password[i] == '#' || password[i] == '$' || password[i] == '%' || password[i] == '^' || password[i] == '&' || password[i] == '*') {
             containsSymbol = true;
         }
-        else {
+        else if (password[i] < '0' || password[i] > '9') {
             return -2;
         }
     }
