@@ -270,6 +270,21 @@ void quit (std::vector<user> &users) {
     saveChangesToFile(users);
 }
 
+//returns:
+//-1 if user with these username and password does not exist
+//otherwise - the index of the user
+int findUser (std::string username, std::string password, std::vector<user> &users) {
+    for (int i = 0; i < users.size(); ++i) {
+        if (users[i].username == username && users[i].password == password) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+void login (std::vector<user> &users);
+
 void startMenu (std::vector<user> &users) {
     while (true)
     {
@@ -286,7 +301,8 @@ void startMenu (std::vector<user> &users) {
         std::cout << '\n';
 
         if (choice == "L") {
-            //TODO: login
+            login(users);
+
             return;
         } else if (choice == "R") {
             registerUser(users);
@@ -315,4 +331,32 @@ int main () {
     startMenu (users);
 
     return 0;
+}
+
+void login (std::vector<user> &users) {
+    std::string username, password;
+
+    std::cout << "Please enter your username: ";
+    std::cin >> username;
+
+    std::cout << '\n';
+
+    std::cout << "Please enter your password: ";
+    std::cin >> password;
+
+    std::cout << '\n';
+
+    size_t generatedHash = std::hash<std::string>{}(password);
+
+    std::string passwordHash = std::to_string(generatedHash);
+
+    int userIdx = findUser (username, passwordHash, users);
+
+    if (userIdx == -1) {
+        std::cout << "Incorrect username or password.\n\n";
+        startMenu(users);
+        return;
+    }
+
+    mainMenu(users, userIdx);
 }
