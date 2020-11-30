@@ -198,20 +198,22 @@ void deposit (std::vector<user> &users, int currentUserIdx);
 
 void logout (std::vector<user> &users, int currentUserIdx);
 
-double askForAmountToTransfer (double maxAmount) {
+double askForAmountToWithdraw (double maxAmount) {
     double amount; 
 
-    std::cout << "Please enter the amount BGN that you want to transfer: ";
+    std::cout << "Please enter the amount BGN: ";
 
         std::cin >> amount;
 
         std::cout << "\n";
 
-    while (amount <= 0 && amount > maxAmount) {
-        std::cout << "This amount is not possible to be tranfered. You can transfer positive amounts BGN up to " << maxAmount << " BGN.\n";
+    while (amount <= 0 || amount > maxAmount) {
+        std::cout << "This amount is not possible to be withdrawed from your account.\n";
         std::cout << "Please enter an amount between 0 and " << maxAmount << " BGN: ";
 
         std::cin >> amount;
+
+        std::cout << '\n';
     }
 
     amount = trunc (amount * 100) / 100;
@@ -275,7 +277,7 @@ void transfer (std::vector<user> &users, int currentUserIdx) {
         return;
     }
 
-    double amount = askForAmountToTransfer(users[currentUserIdx].balance - MAX_OVERDRAFT);
+    double amount = askForAmountToWithdraw(users[currentUserIdx].balance - MAX_OVERDRAFT);
 
     int receiverIdx = askForReceiver(users, currentUserIdx);
 
@@ -284,6 +286,20 @@ void transfer (std::vector<user> &users, int currentUserIdx) {
     users[receiverIdx].balance += amount;
 
     std::cout << "Successfull transfer.\n";
+}
+
+void withdraw (std::vector<user> &users, int currentUserIdx) {
+    if (users[currentUserIdx].balance == MAX_OVERDRAFT) {
+        std::cout << "You have reached the ovedraft limit of your account - " << MAX_OVERDRAFT << " BGN. You cannot do withdraws untill your balance increases.\n";
+
+        return;
+    }
+
+    double amount = askForAmountToWithdraw(users[currentUserIdx].balance - MAX_OVERDRAFT);
+
+    users[currentUserIdx].balance -= amount;
+
+    std::cout << "Successfull withdraw.\n";
 }
 
 void mainMenu (std::vector<user> &users, int currentUserIdx) {
@@ -318,7 +334,7 @@ void mainMenu (std::vector<user> &users, int currentUserIdx) {
         } else if (choice == "T") {
             transfer(users, currentUserIdx);
         } else if (choice == "W") {
-            //TODO: withdraw
+            withdraw(users, currentUserIdx);
         } else {
             std::cout << "Incorrect input. Please try again.\n";
         }
