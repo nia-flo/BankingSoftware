@@ -12,6 +12,8 @@
 #define LINE_DELIMITER ':'
 #define INITIAL_BALANCE 0
 #define MAX_OVERDRAFT -10000
+#define POSSIBLE_PASSWORD_SYMBOLS "!@#$%^&*"
+#define POSSIBLE_USERNAME_SYMBOLS "_-."
 
 std::vector<std::string> splitLine(std::string line, char delimiter) {
     std::vector<std::string> result;
@@ -57,9 +59,19 @@ bool readFile (std::vector<user> &users) {
     return true;
 }
 
+bool isPossibleSymbol(char symbol, std::string possibleSymbols) {
+    for (int i = 0; i < possibleSymbols.size(); ++i) {
+        if (symbol == possibleSymbols[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool isUsernameValid(std::string username) {
     for (int i = 0; i < username.size(); ++i) {
-        if (!((username[i] >= 'a' && username[i] <= 'z') || (username[i] >= 'A' && username[i] <= 'Z') || username[i] == '_' || username[i] == '_' || username[i] == '.')) {
+        if (!((username[i] >= 'a' && username[i] <= 'z') || (username[i] >= 'A' && username[i] <= 'Z') || isPossibleSymbol(username[i], POSSIBLE_USERNAME_SYMBOLS))) {
             return false;
         }
     }
@@ -121,7 +133,7 @@ int isPasswordValid (std::string password) {
         else if (password[i] >= 'A' && password[i] <= 'Z') {
             containsUppercaseLetter = true;
         }
-        else if (password[i] == '!' || password[i] == '@' || password[i] == '#' || password[i] == '$' || password[i] == '%' || password[i] == '^' || password[i] == '&' || password[i] == '*') {
+        else if (isPossibleSymbol(password[i], POSSIBLE_PASSWORD_SYMBOLS)) {
             containsSymbol = true;
         }
         else if (password[i] < '0' || password[i] > '9') {
@@ -164,7 +176,7 @@ std::string askForPassword () {
             break;
         }
         case -2: {
-            std::cout << "The password could contain only latin letters, number and the symbols !@#$%^&*\n";
+            std::cout << "The password could contain only latin letters, number and the symbols " << POSSIBLE_PASSWORD_SYMBOLS << '\n';
             break;
         }
         case -3: {
