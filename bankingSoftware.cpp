@@ -192,11 +192,11 @@ void addUser (std::string username, std::string password, std::vector<user> &use
     users.push_back(newUser);
 }
 
-void cancelAccount (std::vector<user> users, int currentUserIdx);
+void cancelAccount (std::vector<user> &users, int currentUserIdx);
 
-void deposit (std::vector<user> users, int currentUserIdx);
+void deposit (std::vector<user> &users, int currentUserIdx);
 
-void logout (std::vector<user> users, int currentUserIdx);
+void logout (std::vector<user> &users, int currentUserIdx);
 
 double askForAmountToTransfer (double maxAmount) {
     double amount; 
@@ -222,7 +222,7 @@ double askForAmountToTransfer (double maxAmount) {
 //returns:
 //-1 if user with this username does not exist
 //otherwise - the index of the user
-int findUserByUsername (std::vector<user> users, std::string username) {
+int findUserByUsername (std::vector<user> &users, std::string username) {
     for (int i = 0; i < users.size(); ++i) {
         if (users[i].username == username) {
             return i;
@@ -232,7 +232,7 @@ int findUserByUsername (std::vector<user> users, std::string username) {
     return -1;
 }
 
-int askForReceiver (std::vector<user> users, int currentUserIdx) {
+int askForReceiver (std::vector<user> &users, int currentUserIdx) {
     std::string receiverUsername;
     int receiverIdx;
 
@@ -261,7 +261,7 @@ int askForReceiver (std::vector<user> users, int currentUserIdx) {
     return receiverIdx;
 }
 
-void transfer (std::vector<user> users, int currentUserIdx) {
+void transfer (std::vector<user> &users, int currentUserIdx) {
     if (users[currentUserIdx].balance == MAX_OVERDRAFT) {
         std::cout << "You have reached the ovedraft limit of your account - " << MAX_OVERDRAFT << " BGN. You cannot do transfers untill your balance increases.\n";
 
@@ -279,18 +279,14 @@ void transfer (std::vector<user> users, int currentUserIdx) {
 
     int receiverIdx = askForReceiver(users, currentUserIdx);
 
-    //std::cout << "You " << users[currentUserIdx].balance << " - " << amount << '\n';
     users[currentUserIdx].balance -= amount;
-    //std::cout << users[currentUserIdx].balance << '\n';
 
-    //std::cout << "He " << users[receiverIdx].balance << " + " << amount << '\n';
     users[receiverIdx].balance += amount;
-    //std::cout << users[receiverIdx].balance << '\n';
 
     std::cout << "Successfull transfer.\n";
 }
 
-void mainMenu (std::vector<user> users, int currentUserIdx) {
+void mainMenu (std::vector<user> &users, int currentUserIdx) {
     std::cout << "You have " << users[currentUserIdx].balance << " BGN. Choose one of the following options:\n";
 
     while (true)
@@ -321,7 +317,6 @@ void mainMenu (std::vector<user> users, int currentUserIdx) {
             return;
         } else if (choice == "T") {
             transfer(users, currentUserIdx);
-            //std::cout << users[currentUserIdx].balance << "\n..\n..\n";
         } else if (choice == "W") {
             //TODO: withdraw
         } else {
@@ -461,7 +456,7 @@ void login (std::vector<user> &users) {
     mainMenu(users, userIdx);
 }
 
-void cancelAccount (std::vector<user> users, int currentUserIdx) {
+void cancelAccount (std::vector<user> &users, int currentUserIdx) {
     users.erase(users.begin() + currentUserIdx);
 
     std::cout << "Account cancelled successfully.\n\n";
@@ -491,7 +486,7 @@ double askForAmountToDeposit () {
     return amount;
 }
 
-void deposit (std::vector<user> users, int currentUserIdx) {
+void deposit (std::vector<user> &users, int currentUserIdx) {
     double amount = askForAmountToDeposit();
     
     users[currentUserIdx].balance += amount;
@@ -499,7 +494,7 @@ void deposit (std::vector<user> users, int currentUserIdx) {
     std::cout << "Successfully added " << amount << " BGN to to your accont.\n\n";
 }
 
-void logout (std::vector<user> users, int currentUserIdx) {
+void logout (std::vector<user> &users, int currentUserIdx) {
     std::cout << "You logged out successfully.\n\n";
 
     startMenu(users);
