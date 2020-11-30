@@ -11,6 +11,7 @@
 #define FILE_NAME "users.txt"
 #define LINE_DELIMITER ':'
 #define INITIAL_BALANCE 0
+#define MAX_OVERDRAFT -10000
 
 std::vector<std::string> splitLine(std::string line, char delimiter) {
     std::vector<std::string> result;
@@ -197,6 +198,98 @@ void deposit (std::vector<user> users, int currentUserIdx);
 
 void logout (std::vector<user> users, int currentUserIdx);
 
+double askForAmountToTransfer (double maxAmount) {
+    double amount; 
+
+    std::cout << "Please enter the amount BGN that you want to transfer: ";
+
+        std::cin >> amount;
+
+        std::cout << "\n";
+
+    while (amount <= 0 && amount > maxAmount) {
+        std::cout << "This amount is not possible to be tranfered. You can transfer positive amounts BGN up to " << maxAmount << " BGN.\n";
+        std::cout << "Please enter an amount between 0 and " << maxAmount << " BGN: ";
+
+        std::cin >> amount;
+    }
+
+    amount = trunc (amount * 100) / 100;
+
+    return amount;
+}
+
+//returns:
+//-1 if user with this username does not exist
+//otherwise - the index of the user
+int findUserByUsername (std::vector<user> users, std::string username) {
+    for (int i = 0; i < users.size(); ++i) {
+        if (users[i].username == username) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+int askForReceiver (std::vector<user> users, int currentUserIdx) {
+    std::string receiverUsername;
+    int receiverIdx;
+
+    while (true) {
+        std::cout << "Please enter the username of the user whom you want to transfer the money: ";
+
+        std::cin >> receiverUsername;
+
+        std::cout << '\n';
+
+        if (receiverUsername == users[currentUserIdx].username) {
+            std::cout << "You could not transfer money to yourself.\n\n";
+
+            continue;
+        }
+
+        receiverIdx = findUserByUsername(users, receiverUsername);
+
+        if (receiverIdx != -1) {
+            return receiverIdx;
+        }
+
+        std::cout << "User with this username does not exist.\n\n";
+    }
+
+    return receiverIdx;
+}
+
+void transfer (std::vector<user> users, int currentUserIdx) {
+    if (users[currentUserIdx].balance == MAX_OVERDRAFT) {
+        std::cout << "You have reached the ovedraft limit of your account - " << MAX_OVERDRAFT << " BGN. You cannot do transfers untill your balance increases.\n";
+
+        return;
+    }
+
+    if (users.size() == 1)
+    {
+        std::cout << "You are the only user. There is noone to transfer money to.\n\n";
+
+        return;
+    }
+
+    double amount = askForAmountToTransfer(users[currentUserIdx].balance - MAX_OVERDRAFT);
+
+    int receiverIdx = askForReceiver(users, currentUserIdx);
+
+    //std::cout << "You " << users[currentUserIdx].balance << " - " << amount << '\n';
+    users[currentUserIdx].balance -= amount;
+    //std::cout << users[currentUserIdx].balance << '\n';
+
+    //std::cout << "He " << users[receiverIdx].balance << " + " << amount << '\n';
+    users[receiverIdx].balance += amount;
+    //std::cout << users[receiverIdx].balance << '\n';
+
+    std::cout << "Successfull transfer.\n";
+}
+
 void mainMenu (std::vector<user> users, int currentUserIdx) {
     std::cout << "You have " << users[currentUserIdx].balance << " BGN. Choose one of the following options:\n";
 
@@ -227,7 +320,8 @@ void mainMenu (std::vector<user> users, int currentUserIdx) {
 
             return;
         } else if (choice == "T") {
-            //ToDO: transfer
+            transfer(users, currentUserIdx);
+            //std::cout << users[currentUserIdx].balance << "\n..\n..\n";
         } else if (choice == "W") {
             //TODO: withdraw
         } else {
@@ -375,17 +469,17 @@ void cancelAccount (std::vector<user> users, int currentUserIdx) {
     startMenu(users);
 }
 
-double askForAmount () {
+double askForAmountToDeposit () {
     double amount; 
 
-    std::cout << "Please enter the amount BGN: ";
+    std::cout << "Please enter the amount BGN that you want to deposit: ";
 
     std::cin >> amount;
 
     std::cout << "\n";
 
     while (amount <= 0) {
-        std::cout << "The amount is not possible to be 0 or less BGN, please enter a positive amount BGN: ";
+        std::cout << "The amount is not possible to be 0 or less BGN, please enter a positive amount BGN that you want to deposit: ";
 
         std::cin >> amount;
 
@@ -398,7 +492,7 @@ double askForAmount () {
 }
 
 void deposit (std::vector<user> users, int currentUserIdx) {
-    double amount = askForAmount();
+    double amount = askForAmountToDeposit();
     
     users[currentUserIdx].balance += amount;
 
