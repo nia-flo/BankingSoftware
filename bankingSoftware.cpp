@@ -219,6 +219,8 @@ double askForAmountToWithdraw (double maxAmount) {
 
         std::cout << "\n";
 
+        amount = trunc (amount * 100) / 100;
+
     while (amount <= 0 || amount > maxAmount) {
         std::cout << "This amount is not possible to be withdrawed from your account.\n";
         std::cout << "Please enter an amount between 0 and " << maxAmount << " BGN: ";
@@ -226,9 +228,9 @@ double askForAmountToWithdraw (double maxAmount) {
         std::cin >> amount;
 
         std::cout << '\n';
-    }
 
-    amount = trunc (amount * 100) / 100;
+        amount = trunc (amount * 100) / 100;
+    }
 
     return amount;
 }
@@ -280,11 +282,11 @@ void transfer (std::vector<user> &users, int currentUserIdx);
 void withdraw (std::vector<user> &users, int currentUserIdx);
 
 void mainMenu (std::vector<user> &users, int currentUserIdx) {
-    std::cout << "You have " << users[currentUserIdx].balance << " BGN. Choose one of the following options:\n";
+    std::cout << "You have " << users[currentUserIdx].balance << " BGN. ";
 
     while (true)
     {
-        std::cout << "Choose one of the options (C, D, L, T, W):\n";
+        std::cout << "Choose one of the following options:\n";
         std::cout << "C - cancel account\n";
         std::cout << "D - deposit\n";
         std::cout << "L - logout\n";
@@ -329,8 +331,6 @@ void registerUser (std::vector<user> &users) {
 
     username = askForUsername(users);
 
-    std::cout << '\n';
-
     password = askForPassword();
 
     size_t generatedHash = std::hash<std::string>{}(password);
@@ -338,6 +338,8 @@ void registerUser (std::vector<user> &users) {
     std::string passwordHash = std::to_string(generatedHash);
 
     addUser (username, passwordHash, users);
+
+    std::cout << "User registered successfully.\n\n";
 
     mainMenu(users, users.size() - 1);
 }
@@ -503,7 +505,9 @@ void logout (std::vector<user> &users, int currentUserIdx) {
 
 void transfer (std::vector<user> &users, int currentUserIdx) {
     if (users[currentUserIdx].balance == MAX_OVERDRAFT) {
-        std::cout << "You have reached the ovedraft limit of your account - " << MAX_OVERDRAFT << " BGN. You cannot do transfers untill your balance increases.\n";
+        std::cout << "You have reached the ovedraft limit of your account - " << MAX_OVERDRAFT << " BGN. You cannot do transfers untill your balance increases.\n\n";
+
+        mainMenu(users, currentUserIdx);
 
         return;
     }
@@ -511,6 +515,8 @@ void transfer (std::vector<user> &users, int currentUserIdx) {
     if (users.size() == 1)
     {
         std::cout << "You are the only user. There is noone to transfer money to.\n\n";
+
+        mainMenu(users, currentUserIdx);
 
         return;
     }
@@ -523,14 +529,16 @@ void transfer (std::vector<user> &users, int currentUserIdx) {
 
     users[receiverIdx].balance += amount;
 
-    std::cout << "Successfull transfer.\n";
+    std::cout << "You transfered " << amount << " BGN to " << users[receiverIdx].username << " successfully.\n\n";
 
     mainMenu(users, currentUserIdx);
 }
 
 void withdraw (std::vector<user> &users, int currentUserIdx) {
     if (users[currentUserIdx].balance == MAX_OVERDRAFT) {
-        std::cout << "You have reached the ovedraft limit of your account - " << MAX_OVERDRAFT << " BGN. You cannot do withdraws untill your balance increases.\n";
+        std::cout << "You have reached the ovedraft limit of your account - " << MAX_OVERDRAFT << " BGN. You cannot do withdraws untill your balance increases.\n\n";
+
+        mainMenu(users, currentUserIdx);
 
         return;
     }
@@ -539,7 +547,7 @@ void withdraw (std::vector<user> &users, int currentUserIdx) {
 
     users[currentUserIdx].balance -= amount;
 
-    std::cout << "Successfull withdraw.\n";
+    std::cout << "You withdrawed " << amount << " BGN successfully.\n\n";
 
     mainMenu(users, currentUserIdx);
 }
