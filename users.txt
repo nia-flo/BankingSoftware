@@ -1,3 +1,0 @@
-first:passwordhash1:15
-second:passwordhash2:2.15
-third:passwordhash3:21.59
