@@ -53,5 +53,5 @@ After this operation the user is redirected back to the _main menu_.
 ## Start program
 The program should be compilled with GCC compiler (version 9.2.0 or newer). <br />
  <br />
-The file "users.txt" is the database of the program. It should be in the following format (otherwise the program will display error message):
+The file "users.txt" is the database of the program. It should be in the following format (otherwise the program will display error message): <br />
 _username:hashed_password:balance_
