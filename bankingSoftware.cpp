@@ -36,6 +36,30 @@ bool isFileEmpty (std::fstream& file) {
     return file.peek() == std::ifstream::traits_type::eof();
 }
 
+bool isDouble (std::string text) {
+    bool isDotUsed = false;
+
+    for (int i = 0; i < text.size(); ++i) {
+        if (text[i] == '.') {
+            if (!isDotUsed && i != text.size() - 1) {
+                isDotUsed = true;
+            } else {
+                return false;
+            }
+        }
+        else if (text[i] == '-') {
+            if (i != 0) {
+                return false;
+            }
+        }
+        else if (text[i] < '0' || text[i] > '9') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool readFile (std::vector<user> &users) {
     std::fstream file;
 
@@ -50,9 +74,28 @@ bool readFile (std::vector<user> &users) {
     while (!isFileEmpty(file) && std::getline(file, line)) {
         std::vector<std::string> parameters = splitLine(line, LINE_DELIMITER);
 
-        user current(parameters[0], parameters[1], std::stod(parameters[2]));
+        if (parameters.size() != 3) {
+            return false;
+        }
 
-        users.push_back(current);
+        try {
+            if (!isDouble(parameters[2])) {
+                throw "Not a double";
+            }
+
+            double balance = std::stod(parameters[2]);
+
+            balance = trunc (balance * 100) / 100;
+
+            user current(parameters[0], parameters[1], balance);
+            
+            users.push_back(current);
+        }
+        catch (...) {
+            return false;
+        }
+        
+        return true;
     }
 
     file.close();
@@ -420,7 +463,7 @@ int main () {
     std::vector<user> users;
 
     if (!readFile (users)) {
-        std::cout << "Error - database file could not be loaded.";
+        std::cout << "Error: database file could not be loaded or it is not in the correct format.";
 
         return 0;
     }
@@ -475,7 +518,7 @@ void cancelAccount (std::vector<user> &users, int currentUserIdx) {
         std::cout << "Incorrect password! \n\n";
         
         mainMenu (users, currentUserIdx);
-        
+
         return;
     }
 
