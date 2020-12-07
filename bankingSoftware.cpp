@@ -94,8 +94,6 @@ bool readFile (std::vector<user> &users) {
         catch (...) {
             return false;
         }
-        
-        return true;
     }
 
     file.close();
