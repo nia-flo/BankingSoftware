@@ -14,6 +14,7 @@
 #define MAX_OVERDRAFT -10000
 #define POSSIBLE_PASSWORD_SYMBOLS "!@#$%^&*"
 #define POSSIBLE_USERNAME_SYMBOLS "_-."
+#define MIN_PASSWORD_LENGHT 5
 
 std::vector<std::string> splitLine(std::string line, char delimiter) {
     std::vector<std::string> result;
@@ -120,7 +121,7 @@ std::string askForUsername (std::vector<user> &users) {
 //-4 if the password doesnt contain an uppercase letter
 //-5 if the password doesnt contain a symbol
 int isPasswordValid (std::string password) {
-    if (password.size() < 5) {
+    if (password.size() < MIN_PASSWORD_LENGHT) {
         return -1;
     }
 
@@ -458,6 +459,28 @@ void login (std::vector<user> &users) {
 }
 
 void cancelAccount (std::vector<user> &users, int currentUserIdx) {
+    std::string password;
+
+    std::cout << "Please enter your password: ";
+
+    std::cin >> password;
+
+    size_t generatedHash = std::hash<std::string>{}(password);
+
+    std::string passwordHash = std::to_string(generatedHash);
+
+    std::cout << "\n";
+
+    if (passwordHash != users[currentUserIdx].password) {
+        std::cout << "Incorrect password! \n\n";
+        
+        mainMenu (users, currentUserIdx);
+        
+        return;
+    }
+
+
+
     users.erase(users.begin() + currentUserIdx);
 
     std::cout << "Account cancelled successfully.\n\n";
