@@ -11,7 +11,9 @@
 
 void startMenu (std::vector<user> &users);
 
-std::vector<std::string> splitLine(std::string line, char delimiter) {
+void mainMenu (std::vector<user> &users, int currentUserIdx);
+
+std::vector<std::string> splitLine (std::string line, char delimiter) {
     std::vector<std::string> result;
 
     for (int i = 0; i < line.size(); ++i) {
@@ -30,7 +32,7 @@ std::vector<std::string> splitLine(std::string line, char delimiter) {
 bool readFile (std::vector<user> &users) {
     std::fstream file;
 
-    file.open (FILE_NAME, std::ios::in | std::ios::out | std::ios::app);
+    file.open(FILE_NAME, std::ios::in | std::ios::out | std::ios::app);
 
     if (!file.is_open()) {
         return false;
@@ -101,11 +103,10 @@ std::string askForPassword () {
 
     int isValid = isPasswordValid(password);
 
-    if (isValid == 1) {
-        return password;
-    }
-
     switch (isValid){
+        case 1: {
+            return password;
+        }
         case -1: {
             std::cout << "The password must contain at least 5 characters\n";
             break;
@@ -139,128 +140,6 @@ void addUser (std::string username, std::string password, std::vector<user> &use
     users.push_back(newUser);
 }
 
-void cancelAccount (std::vector<user> &users, int currentUserIdx);
-
-void deposit (std::vector<user> &users, int currentUserIdx);
-
-void logout (std::vector<user> &users, int currentUserIdx);
-
-double askForAmountToWithdraw (double maxAmount) {
-    double amount; 
-
-    std::cout << "Please enter the amount BGN: ";
-
-        std::cin >> amount;
-
-        std::cout << "\n";
-
-        amount = trunc (amount * 100) / 100;
-
-    while (amount <= 0 || amount > maxAmount) {
-        std::cout << "This amount is not possible to be withdrawed from your account.\n";
-        std::cout << "Please enter an amount between 0 and " << maxAmount << " BGN: ";
-
-        std::cin >> amount;
-
-        std::cout << '\n';
-
-        amount = trunc (amount * 100) / 100;
-    }
-
-    return amount;
-}
-
-//returns:
-//-1 if user with this username does not exist
-//otherwise - the index of the user
-int findUserByUsername (std::vector<user> &users, std::string username) {
-    for (int i = 0; i < users.size(); ++i) {
-        if (users[i].username == username) {
-            return i;
-        }
-    }
-    
-    return -1;
-}
-
-int askForReceiver (std::vector<user> &users, int currentUserIdx) {
-    std::string receiverUsername;
-    int receiverIdx;
-
-    while (true) {
-        std::cout << "Please enter the username of the user whom you want to transfer the money: ";
-
-        std::cin >> receiverUsername;
-
-        std::cout << '\n';
-
-        if (receiverUsername == users[currentUserIdx].username) {
-            std::cout << "You could not transfer money to yourself.\n\n";
-
-            continue;
-        }
-
-        receiverIdx = findUserByUsername(users, receiverUsername);
-
-        if (receiverIdx != -1) {
-            return receiverIdx;
-        }
-
-        std::cout << "User with this username does not exist.\n\n";
-    }
-
-    return receiverIdx;
-}
-
-void transfer (std::vector<user> &users, int currentUserIdx);
-
-void withdraw (std::vector<user> &users, int currentUserIdx);
-
-void mainMenu (std::vector<user> &users, int currentUserIdx) {
-    std::cout << "You have " << users[currentUserIdx].balance << " BGN. ";
-
-    while (true)
-    {
-        std::cout << "Choose one of the following options:\n";
-        std::cout << "C - cancel account\n";
-        std::cout << "D - deposit\n";
-        std::cout << "L - logout\n";
-        std::cout << "T - transfer\n";
-        std::cout << "W - withdraw\n";
-
-        //choice is string although it must be only one letter, because the user could enter the whole word instead of the wanted letter
-        std::string choice;
-
-        std::cin >> choice;
-
-        std::cout << '\n';
-
-        if (choice == "C") {
-            cancelAccount(users, currentUserIdx);
-
-            return;
-        } else if (choice == "D") {
-            deposit(users, currentUserIdx);
-
-            return;
-        } else if (choice == "L") {
-            logout(users, currentUserIdx);
-
-            return;
-        } else if (choice == "T") {
-            transfer(users, currentUserIdx);
-
-            return;
-        } else if (choice == "W") {
-            withdraw(users, currentUserIdx);
-
-            return;
-        } else {
-            std::cout << "Incorrect input. Please try again.\n";
-        }
-    }
-}
-
 std::string askForPasswordConfirmation () {
     std::cout << "Please confirm your password: ";
 
@@ -276,19 +155,15 @@ void registerUser (std::vector<user> &users) {
     std::string username, password, passwordConfirmation;
 
     username = askForUsername(users);
-
     password = askForPassword();
-
     passwordConfirmation = askForPasswordConfirmation();
 
     if (password != passwordConfirmation) {
-        std::cout << "Unsuccessfull registration - passwords do not match.\n";
-
+        std::cout << "Unsuccessfull registration - passwords do not match.\n\n";
         startMenu(users);
     }
 
     size_t generatedHash = std::hash<std::string>{}(password);
-
     std::string passwordHash = std::to_string(generatedHash);
 
     addUser (username, passwordHash, users);
@@ -320,9 +195,6 @@ void quit (std::vector<user> &users) {
     saveChangesToFile(users);
 }
 
-//returns:
-//-1 if user with these username and password does not exist
-//otherwise - the index of the user
 int findUser (std::string username, std::string password, std::vector<user> &users) {
     for (int i = 0; i < users.size(); ++i) {
         if (users[i].username == username && users[i].password == password) {
@@ -331,42 +203,6 @@ int findUser (std::string username, std::string password, std::vector<user> &use
     }
 
     return -1;
-}
-
-void login (std::vector<user> &users);
-
-void startMenu (std::vector<user> &users) {
-    while (true)
-    {
-        std::cout << "Choose one of the options (L, R or Q):\n";
-        std::cout << "L - login\n";
-        std::cout << "R - register\n";
-        std::cout << "Q - quit\n";
-
-        //choice is string although it must be only one letter, because the user could enter the whole word instead of the wanted letter
-        std::string choice;
-
-        std::cin >> choice;
-
-        std::cout << '\n';
-
-        if (choice == "L") {
-            login(users);
-
-            return;
-        } else if (choice == "R") {
-            registerUser(users);
-
-            return;
-        } else if (choice == "Q") {
-            quit(users);
-            
-            return;
-        } else {
-            std::cout << "Incorrect input. Please try again.\n";
-        }
-    }
-    
 }
 
 void login (std::vector<user> &users) {
@@ -383,7 +219,6 @@ void login (std::vector<user> &users) {
     std::cout << '\n';
 
     size_t generatedHash = std::hash<std::string>{}(password);
-
     std::string passwordHash = std::to_string(generatedHash);
 
     int userIdx = findUser (username, passwordHash, users);
@@ -401,24 +236,18 @@ void cancelAccount (std::vector<user> &users, int currentUserIdx) {
     std::string password;
 
     std::cout << "Please enter your password: ";
-
     std::cin >> password;
 
     size_t generatedHash = std::hash<std::string>{}(password);
-
     std::string passwordHash = std::to_string(generatedHash);
 
     std::cout << "\n";
 
     if (passwordHash != users[currentUserIdx].password) {
         std::cout << "Incorrect password! \n\n";
-        
         mainMenu (users, currentUserIdx);
-
         return;
     }
-
-
 
     users.erase(users.begin() + currentUserIdx);
 
@@ -431,14 +260,12 @@ double askForAmountToDeposit () {
     double amount; 
 
     std::cout << "Please enter the amount BGN that you want to deposit: ";
-
     std::cin >> amount;
 
     std::cout << "\n";
 
     while (amount <= 0) {
         std::cout << "The amount is not possible to be 0 or less BGN, please enter a positive amount BGN that you want to deposit: ";
-
         std::cin >> amount;
 
         std::cout << "\n";
@@ -465,21 +292,79 @@ void logout (std::vector<user> &users, int currentUserIdx) {
     startMenu(users);
 }
 
+double askForAmountToWithdraw (double maxAmount) {
+    double amount; 
+
+    std::cout << "Please enter the amount BGN: ";
+    std::cin >> amount;
+
+    std::cout << "\n";
+
+    amount = trunc (amount * 100) / 100;
+
+    while (amount <= 0 || amount > maxAmount) {
+        std::cout << "This amount is not possible to be withdrawed from your account.\n";
+        std::cout << "Please enter an amount between 0 and " << maxAmount << " BGN: ";
+
+        std::cin >> amount;
+
+        std::cout << '\n';
+
+        amount = trunc (amount * 100) / 100;
+    }
+
+    return amount;
+}
+
+int findUserByUsername (std::vector<user> &users, std::string username) {
+    for (int i = 0; i < users.size(); ++i) {
+        if (users[i].username == username) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+int askForReceiver (std::vector<user> &users, int currentUserIdx) {
+    std::string receiverUsername;
+    int receiverIdx;
+
+    while (true) {
+        std::cout << "Please enter the username of the user whom you want to transfer the money: ";
+        std::cin >> receiverUsername;
+
+        std::cout << '\n';
+
+        if (receiverUsername == users[currentUserIdx].username) {
+            std::cout << "You could not transfer money to yourself.\n\n";
+
+            continue;
+        }
+
+        receiverIdx = findUserByUsername(users, receiverUsername);
+
+        if (receiverIdx != -1) {
+            return receiverIdx;
+        }
+
+        std::cout << "User with this username does not exist.\n\n";
+    }
+
+    return receiverIdx;
+}
+
 void transfer (std::vector<user> &users, int currentUserIdx) {
     if (users[currentUserIdx].balance == MAX_OVERDRAFT) {
         std::cout << "You have reached the ovedraft limit of your account - " << MAX_OVERDRAFT << " BGN. You cannot do transfers untill your balance increases.\n\n";
-
         mainMenu(users, currentUserIdx);
-
         return;
     }
 
     if (users.size() == 1)
     {
         std::cout << "You are the only user. There is noone to transfer money to.\n\n";
-
         mainMenu(users, currentUserIdx);
-
         return;
     }
 
@@ -488,7 +373,6 @@ void transfer (std::vector<user> &users, int currentUserIdx) {
     int receiverIdx = askForReceiver(users, currentUserIdx);
 
     users[currentUserIdx].balance -= amount;
-
     users[receiverIdx].balance += amount;
 
     std::cout << "You transfered " << amount << " BGN to " << users[receiverIdx].username << " successfully.\n\n";
@@ -499,9 +383,7 @@ void transfer (std::vector<user> &users, int currentUserIdx) {
 void withdraw (std::vector<user> &users, int currentUserIdx) {
     if (users[currentUserIdx].balance == MAX_OVERDRAFT) {
         std::cout << "You have reached the ovedraft limit of your account - " << MAX_OVERDRAFT << " BGN. You cannot do withdraws untill your balance increases.\n\n";
-
         mainMenu(users, currentUserIdx);
-
         return;
     }
 
@@ -512,4 +394,89 @@ void withdraw (std::vector<user> &users, int currentUserIdx) {
     std::cout << "You withdrawed " << amount << " BGN successfully.\n\n";
 
     mainMenu(users, currentUserIdx);
+}
+
+void startMenu (std::vector<user> &users) {
+    while (true)
+    {
+        std::cout << "Choose one of the options (L, R or Q):\n";
+        std::cout << "L - login\n";
+        std::cout << "R - register\n";
+        std::cout << "Q - quit\n";
+
+        //choice is string although it must be only one letter, because the user could enter the whole word instead of the wanted letter
+        std::string choice;
+        std::cin >> choice;
+
+        std::cout << '\n';
+
+        if (choice == "L") {
+            login(users);
+
+            return;
+        } 
+        else if (choice == "R") {
+            registerUser(users);
+
+            return;
+        } 
+        else if (choice == "Q") {
+            quit(users);
+            
+            return;
+        } 
+        else {
+            std::cout << "Incorrect input. Please try again.\n\n";
+        }
+    }
+    
+}
+
+void mainMenu (std::vector<user> &users, int currentUserIdx) {
+    std::cout << "You have " << users[currentUserIdx].balance << " BGN. ";
+
+    while (true)
+    {
+        std::cout << "Choose one of the following options:\n";
+        std::cout << "C - cancel account\n";
+        std::cout << "D - deposit\n";
+        std::cout << "L - logout\n";
+        std::cout << "T - transfer\n";
+        std::cout << "W - withdraw\n";
+
+        //choice is string although it must be only one letter, because the user could enter the whole word instead of the wanted letter
+        std::string choice;
+        std::cin >> choice;
+
+        std::cout << '\n';
+
+        if (choice == "C") {
+            cancelAccount(users, currentUserIdx);
+
+            return;
+        } 
+        else if (choice == "D") {
+            deposit(users, currentUserIdx);
+
+            return;
+        } 
+        else if (choice == "L") {
+            logout(users, currentUserIdx);
+
+            return;
+        } 
+        else if (choice == "T") {
+            transfer(users, currentUserIdx);
+
+            return;
+        } 
+        else if (choice == "W") {
+            withdraw(users, currentUserIdx);
+
+            return;
+        } 
+        else {
+            std::cout << "Incorrect input. Please try again.\n";
+        }
+    }
 }

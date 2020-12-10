@@ -37,7 +37,7 @@ bool isDouble (std::string text) {
     return true;
 }
 
-bool isPossibleSymbol(char symbol, std::string possibleSymbols) {
+bool isPossibleSymbol (char symbol, std::string possibleSymbols) {
     for (int i = 0; i < possibleSymbols.size(); ++i) {
         if (symbol == possibleSymbols[i]) {
             return true;
@@ -47,7 +47,7 @@ bool isPossibleSymbol(char symbol, std::string possibleSymbols) {
     return false;
 }
 
-bool isUsernameValid(std::string username) {
+bool isUsernameValid (std::string username) {
     for (int i = 0; i < username.size(); ++i) {
         if (!((username[i] >= 'a' && username[i] <= 'z') || (username[i] >= 'A' && username[i] <= 'Z') || isPossibleSymbol(username[i], POSSIBLE_USERNAME_SYMBOLS))) {
             return false;
@@ -67,13 +67,6 @@ bool isUsernameTaken (std::string username, std::vector<user> &users) {
     return false;
 }
 
-//returns:
-//1 if the password is valid
-//-1 if the password's lenght is less than 5 characters
-//-2 is the password contains characters that are not allowed
-//-3 if the password doesnt contain a lowercase letter
-//-4 if the password doesnt contain an uppercase letter
-//-5 if the password doesnt contain a symbol
 int isPasswordValid (std::string password) {
     if (password.size() < MIN_PASSWORD_LENGHT) {
         return -1;
