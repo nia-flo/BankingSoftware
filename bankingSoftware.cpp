@@ -1,4 +1,4 @@
-#include "functionality.cpp"
+#include "functionality.h"
 
 int main () {
     std::vector<user> users;
