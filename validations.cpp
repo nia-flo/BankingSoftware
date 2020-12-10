@@ -13,7 +13,7 @@ bool isFileEmpty (std::fstream& file) {
     return file.peek() == std::ifstream::traits_type::eof();
 }
 
-bool isDouble (std::string &text) {
+bool isDouble (const std::string &text) {
     bool isDotUsed = false;
 
     for (int i = 0; i < text.size(); ++i) {
@@ -47,7 +47,7 @@ bool isPossibleSymbol (char symbol, std::string possibleSymbols) {
     return false;
 }
 
-bool isUsernameValid (std::string &username) {
+bool isUsernameValid (const std::string &username) {
     for (int i = 0; i < username.size(); ++i) {
         if (!((username[i] >= 'a' && username[i] <= 'z') || (username[i] >= 'A' && username[i] <= 'Z') || isPossibleSymbol(username[i], POSSIBLE_USERNAME_SYMBOLS))) {
             return false;
@@ -57,7 +57,7 @@ bool isUsernameValid (std::string &username) {
     return true;
 }
 
-bool isUsernameTaken (std::string &username, std::vector<user> &users) {
+bool isUsernameTaken (const std::string &username, const std::vector<user> &users) {
     for (int i = 0; i < users.size(); ++i) {
         if (username == users[i].username) {
             return true;
@@ -67,7 +67,7 @@ bool isUsernameTaken (std::string &username, std::vector<user> &users) {
     return false;
 }
 
-int isPasswordValid (std::string &password) {
+int isPasswordValid (const std::string &password) {
     if (password.size() < MIN_PASSWORD_LENGHT) {
         return -1;
     }

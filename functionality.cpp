@@ -13,7 +13,7 @@ void startMenu (std::vector<user> &users);
 
 void mainMenu (std::vector<user> &users, int currentUserIdx);
 
-std::vector<std::string> splitLine (std::string &line, char delimiter) {
+std::vector<std::string> splitLine (const std::string &line, char delimiter) {
     std::vector<std::string> result;
 
     for (int i = 0; i < line.size(); ++i) {
@@ -70,7 +70,7 @@ bool readFile (std::vector<user> &users) {
     return true;
 }
 
-std::string askForUsername (std::vector<user> &users) {
+std::string askForUsername (const std::vector<user> &users) {
     std::string username;
 
     std::cout << "Please enter your username: ";
@@ -134,7 +134,7 @@ std::string askForPassword () {
     return askForPassword();
 }
 
-void addUser (std::string &username, std::string &password, std::vector<user> &users) {
+void addUser (const std::string &username, const std::string &password, std::vector<user> &users) {
     user newUser(username, password, INITIAL_BALANCE);
 
     users.push_back(newUser);
@@ -173,7 +173,7 @@ void registerUser (std::vector<user> &users) {
     mainMenu(users, users.size() - 1);
 }
 
-bool saveChangesToFile (std::vector<user> &users) {
+bool saveChangesToFile (const std::vector<user> &users) {
     std::fstream file;
 
     file.open (FILE_NAME, std::ios::out | std::ios::trunc);
@@ -191,11 +191,11 @@ bool saveChangesToFile (std::vector<user> &users) {
     return true;
 }
 
-void quit (std::vector<user> &users) {
+void quit (const std::vector<user> &users) {
     saveChangesToFile(users);
 }
 
-int findUser (std::string &username, std::string &password, std::vector<user> &users) {
+int findUser (const std::string &username, const std::string &password, const std::vector<user> &users) {
     for (int i = 0; i < users.size(); ++i) {
         if (users[i].username == username && users[i].password == password) {
             return i;
@@ -316,7 +316,7 @@ double askForAmountToWithdraw (double maxAmount) {
     return amount;
 }
 
-int findUserByUsername (std::vector<user> &users, std::string &username) {
+int findUserByUsername (const std::vector<user> &users, const std::string &username) {
     for (int i = 0; i < users.size(); ++i) {
         if (users[i].username == username) {
             return i;
@@ -326,7 +326,7 @@ int findUserByUsername (std::vector<user> &users, std::string &username) {
     return -1;
 }
 
-int askForReceiver (std::vector<user> &users, int currentUserIdx) {
+int askForReceiver (const std::vector<user> &users, int currentUserIdx) {
     std::string receiverUsername;
     int receiverIdx;
 
