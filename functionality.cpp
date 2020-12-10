@@ -9,6 +9,7 @@
 #define LINE_DELIMITER ':'
 #define INITIAL_BALANCE 0
 
+void startMenu (std::vector<user> &users);
 
 std::vector<std::string> splitLine(std::string line, char delimiter) {
     std::vector<std::string> result;
@@ -260,12 +261,31 @@ void mainMenu (std::vector<user> &users, int currentUserIdx) {
     }
 }
 
+std::string askForPasswordConfirmation () {
+    std::cout << "Please confirm your password: ";
+
+    std::string password;
+    std::cin >> password;
+
+    std::cout << '\n';
+
+    return password;
+}
+
 void registerUser (std::vector<user> &users) {
-    std::string username, password;
+    std::string username, password, passwordConfirmation;
 
     username = askForUsername(users);
 
     password = askForPassword();
+
+    passwordConfirmation = askForPasswordConfirmation();
+
+    if (password != passwordConfirmation) {
+        std::cout << "Unsuccessfull registration - passwords do not match.\n";
+
+        startMenu(users);
+    }
 
     size_t generatedHash = std::hash<std::string>{}(password);
 
