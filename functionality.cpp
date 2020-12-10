@@ -13,7 +13,7 @@ void startMenu (std::vector<user> &users);
 
 void mainMenu (std::vector<user> &users, int currentUserIdx);
 
-std::vector<std::string> splitLine (std::string line, char delimiter) {
+std::vector<std::string> splitLine (std::string &line, char delimiter) {
     std::vector<std::string> result;
 
     for (int i = 0; i < line.size(); ++i) {
@@ -134,7 +134,7 @@ std::string askForPassword () {
     return askForPassword();
 }
 
-void addUser (std::string username, std::string password, std::vector<user> &users) {
+void addUser (std::string &username, std::string &password, std::vector<user> &users) {
     user newUser(username, password, INITIAL_BALANCE);
 
     users.push_back(newUser);
@@ -195,7 +195,7 @@ void quit (std::vector<user> &users) {
     saveChangesToFile(users);
 }
 
-int findUser (std::string username, std::string password, std::vector<user> &users) {
+int findUser (std::string &username, std::string &password, std::vector<user> &users) {
     for (int i = 0; i < users.size(); ++i) {
         if (users[i].username == username && users[i].password == password) {
             return i;
@@ -316,7 +316,7 @@ double askForAmountToWithdraw (double maxAmount) {
     return amount;
 }
 
-int findUserByUsername (std::vector<user> &users, std::string username) {
+int findUserByUsername (std::vector<user> &users, std::string &username) {
     for (int i = 0; i < users.size(); ++i) {
         if (users[i].username == username) {
             return i;
