@@ -161,6 +161,8 @@ void registerUser (std::vector<user> &users) {
     if (password != passwordConfirmation) {
         std::cout << "Unsuccessfull registration - passwords do not match.\n\n";
         startMenu(users);
+
+        return;
     }
 
     size_t generatedHash = std::hash<std::string>{}(password);
