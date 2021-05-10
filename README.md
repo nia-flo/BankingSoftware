@@ -52,7 +52,11 @@ After this operation the user is redirected back to the _main menu_.
 
 ## Start program
 The program should be compilled with GCC compiler (version 9.2.0 or newer). <br />
-_Build:_ g++ *cpp -o bankingSoftware.exe <br />
+_Build:_ 
+```bash
+g++ *cpp -o bankingSoftware.exe
+```
+<br />
 _Run:_ Open bankingSoftware.exe <br />
  <br />
  
