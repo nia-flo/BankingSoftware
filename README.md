@@ -56,9 +56,11 @@ _Build:_
 ```bash
 g++ *cpp -o bankingSoftware.exe
 ```
+_Run:_ 
+```bash
+bankingSoftware.exe
+```
 <br />
-_Run:_ Open bankingSoftware.exe <br />
- <br />
  
 The file "users.txt" is the database of the program. It should be in the following format (otherwise the program will display error message): <br />
 _username:hashed_password:balance_
